@@ -1,4 +1,5 @@
 import pygame as pg
+from os import path
 
 # Game variables
 GAME_NAME = 'Title WIP'
@@ -26,3 +27,8 @@ RIGHT = pg.K_RIGHT
 DOWN = pg.K_DOWN
 UP = pg.K_UP
 SPACE = pg.K_SPACE
+
+# Paths
+DIR = path.dirname(__file__)
+IMG = path.join(DIR, 'img')
+FIGHTERS = path.join(IMG, 'fighters')

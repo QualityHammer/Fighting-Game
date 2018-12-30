@@ -1,5 +1,5 @@
 from settings import *
-from objects import Ground
+from objects import Ground, Wall
 from fighters import Test
 import sys
 
@@ -7,6 +7,7 @@ import sys
 class Game:
 
     def __init__(self):
+        # Pygame initialization
         pg.init()
         self.screen = pg.display.set_mode(SIZE)
         pg.display.set_caption(TITLE)
@@ -23,6 +24,13 @@ class Game:
         self.ground = Ground()
         self.all_sprites.add(self.ground)
         self.all_objects.add(self.ground)
+        # Test walls
+        self.lwall = Wall('left')
+        self.all_sprites.add(self.lwall)
+        self.all_objects.add(self.lwall)
+        self.rwall = Wall('right')
+        self.all_sprites.add(self.rwall)
+        self.all_objects.add(self.rwall)
         # Test fighter
         self.test = Test(self)
         self.all_sprites.add(self.test)
@@ -30,15 +38,36 @@ class Game:
         self.run()
 
     def run(self):
+        # Main loop switch
         self.playing = True
-        self.screen.fill(WHITE)
+        # Game loop
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.updates()
             self.draw()
+            if DEBUG:
+                self.debug()
+
+    def collisions(self):
+        # Collision handler
+        coll = pg.sprite.spritecollide(self.test, self.all_objects, False)
+        for c in coll:
+            # Ground collision
+            if c.ID == 'GND':
+                self.test.rect.bottom = c.rect.top
+                self.test.vy = 0
+            # Wall collisions
+            elif c.ID == 'WLL':
+                if c.direction == 'left':
+                    self.test.rect.left = c.rect.right
+                    self.test.vx = 0
+                else:
+                    self.test.rect.right = c.rect.left
+                    self.test.vx = 0
 
     def events(self):
+        # Event handler
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 sys.exit()
@@ -48,17 +77,20 @@ class Game:
     def updates(self):
         # All fighters update
         self.all_fighters.update()
-        # Ground collision
-        if self.test.vy > 0:
-            coll = pg.sprite.spritecollide(self.test, self.all_objects, False)
-            if coll:
-                self.test.posy = coll[0].rect.top
-                self.test.vy = 0
+        # Collisions
+        self.collisions()
 
     def draw(self):
+        # Pygame draw
         self.screen.fill(WHITE)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
+
+    def debug(self):
+        # Prints test fighter's velocity, acceleration, and position every frame
+        print(self.test.vx, self.test.vy)
+        print(self.test.ax, self.test.ay)
+        print(self.test.rect.center)
 
 
 g = Game()

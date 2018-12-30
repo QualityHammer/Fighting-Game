@@ -5,14 +5,19 @@ vec = pg.math.Vector2
 # Test fighter
 class Test(pg.sprite.Sprite):
 
+    # Test fighter stats
     GRAVITY = 0.8
     ACCEL = 1.5
-    JUMP = -25
+    JUMP = -16
     FRICTION = -0.12
 
     def __init__(self, game):
         self.game = game
         pg.sprite.Sprite.__init__(self)
+        # IMAGE IS NOT READY
+        # self.image = pg.image.load(path.join(FIGHTERS, 'TestFighter.png')).convert()
+        # self.image = pg.transform.scale(self.image, (60, 100))
+        # self.image.set_colorkey(BLACK)
         self.image = pg.Surface((60, 100))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
@@ -25,11 +30,36 @@ class Test(pg.sprite.Sprite):
         self.vy = 0
 
     def jump(self):
-        self.rect.y += 1
-        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
-        self.rect.y -= 1
+        # If fighter is on the ground, jumps
+        hits = self.ycollide(1)
         if hits:
             self.vy = Test.JUMP
+        else:
+            self.wall_jump(1)
+            self.wall_jump(-1)
+
+    def wall_jump(self, direction):
+        # If fighter is grabbing a wall, jumps
+        hits = self.xcollide(direction)
+        if hits:
+            self.vy = Test.JUMP
+            self.vx = Test.JUMP * direction
+
+    def xcollide(self, direction):
+        # Checks collision with walls
+        # direction; -1 to check left and 1 for right
+        self.rect.x += direction
+        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
+        self.rect.x -= direction
+        return hits
+
+    def ycollide(self, direction):
+        # Checks collision with ground (potentially ceiling)
+        # direction; -1 to check ground
+        self.rect.y += direction
+        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
+        self.rect.y -= direction
+        return hits
 
     def update(self):
         # Resets acceleration and applies gravity
@@ -50,6 +80,5 @@ class Test(pg.sprite.Sprite):
         self.vx += self.ax
         self.vy += self.ay
         # Applies velocity and sets position
-        self.posx += self.vx + self.ax * 0.5
-        self.posy += self.vy + self.ay * 0.5
-        self.rect.midbottom = (self.posx, self.posy)
+        self.rect.x += self.vx + self.ax * 0.5
+        self.rect.y += self.vy + self.ay * 0.5
