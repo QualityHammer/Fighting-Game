@@ -1,6 +1,7 @@
 from settings import *
 from objects import Ground, Wall
 from fighters import Test
+from weapons import TestWeapon
 import sys
 
 
@@ -18,6 +19,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_objects = pg.sprite.Group()
         self.all_fighters = pg.sprite.Group()
+        self.all_weapons = pg.sprite.Group()
 
     def new(self):
         # Test ground
@@ -35,6 +37,10 @@ class Game:
         self.test = Test(self)
         self.all_sprites.add(self.test)
         self.all_fighters.add(self.test)
+        # Test weapon
+        self.weapon = TestWeapon(self.test)
+        self.all_sprites.add(self.weapon)
+        self.all_weapons.add(self.weapon)
         self.run()
 
     def run(self):
@@ -77,6 +83,7 @@ class Game:
     def updates(self):
         # All fighters update
         self.all_fighters.update()
+        self.all_weapons.update()
         # Collisions
         self.collisions()
 
