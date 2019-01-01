@@ -27,6 +27,7 @@ RIGHT = pg.K_RIGHT
 DOWN = pg.K_DOWN
 UP = pg.K_UP
 SPACE = pg.K_SPACE
+C = pg.K_c
 
 # Paths
 DIR = path.dirname(__file__)

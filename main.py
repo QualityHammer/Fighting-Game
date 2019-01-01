@@ -1,6 +1,6 @@
 from settings import *
 from objects import Ground, Wall
-from fighters import Test
+from fighters import Test, PunchBag
 from weapons import TestWeapon
 import sys
 
@@ -41,6 +41,10 @@ class Game:
         self.weapon = TestWeapon(self.test)
         self.all_sprites.add(self.weapon)
         self.all_weapons.add(self.weapon)
+        # Test Dummy
+        self.dummy = PunchBag()
+        self.all_sprites.add(self.dummy)
+        self.all_fighters.add(self.dummy)
         self.run()
 
     def run(self):
@@ -56,7 +60,7 @@ class Game:
                 self.debug()
 
     def collisions(self):
-        # Collision handler
+        # Test Fighter Collision handler
         coll = pg.sprite.spritecollide(self.test, self.all_objects, False)
         for c in coll:
             # Ground collision
@@ -71,14 +75,32 @@ class Game:
                 else:
                     self.test.rect.right = c.rect.left
                     self.test.vx = 0
+        # Dummy Collision handler
+        coll = pg.sprite.spritecollide(self.dummy, self.all_objects, False)
+        for c in coll:
+            # Ground collision
+            if c.ID == 'GND':
+                self.dummy.rect.bottom = c.rect.top
+                self.dummy.vy = 0
+            # Wall collisions
+            elif c.ID == 'WLL':
+                if c.direction == 'left':
+                    self.dummy.rect.left = c.rect.right
+                    self.dummy.vx = 0
+                else:
+                    self.dummy.rect.right = c.rect.left
+                    self.dummy.vx = 0
 
     def events(self):
         # Event handler
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 sys.exit()
-            elif event.type == pg.KEYDOWN and event.key == SPACE:
-                self.test.jump()
+            elif event.type == pg.KEYDOWN:
+                if event.key == SPACE:
+                    self.test.jump()
+                elif event.key == C:
+                    self.weapon.attack()
 
     def updates(self):
         # All fighters update
