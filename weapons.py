@@ -10,8 +10,9 @@ class TestWeapon(pg.sprite.Sprite):
     def __init__(self, fighter):
         pg.sprite.Sprite.__init__(self)
         self.fighter = fighter
-        self.image = pg.Surface((80, 40))
-        self.image.fill(LRED)
+        self.image = pg.image.load(path.join(WEAPONS, 'TestWeapon.png')).convert()
+        self.image = pg.transform.rotate(self.image, 270)
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.topleft = self.fighter.rect.center
         self.direction = 'r'
@@ -35,8 +36,9 @@ class TestWeapon(pg.sprite.Sprite):
                     hit.vx = -TestWeapon.KNOCKBACK
                     hit.vy = -TestWeapon.KNOCKBACK / 2
         # Resets sprite
-        self.image = pg.Surface((80, 40))
-        self.image.fill(LRED)
+        self.image = pg.image.load(path.join(WEAPONS, 'TestWeapon.png')).convert()
+        self.image = pg.transform.rotate(self.image, 270)
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.center = center
 

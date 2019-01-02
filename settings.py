@@ -33,3 +33,4 @@ C = pg.K_c
 DIR = path.dirname(__file__)
 IMG = path.join(DIR, 'img')
 FIGHTERS = path.join(IMG, 'fighters')
+WEAPONS = path.join(IMG, 'weapons')

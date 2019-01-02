@@ -15,8 +15,7 @@ class Test(pg.sprite.Sprite):
         self.game = game
         pg.sprite.Sprite.__init__(self)
         # Temp images
-        img = pg.image.load(path.join(FIGHTERS, 'TestFighter.png')).convert()
-        self.STANDR = pg.transform.scale(img, (60, 100))
+        self.STANDR = pg.image.load(path.join(FIGHTERS, 'TestFighter.png')).convert()
         self.STANDL = pg.transform.flip(self.STANDR, True, False)
         # TEST IMAGE
         self.image = self.STANDR
