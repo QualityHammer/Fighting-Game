@@ -12,6 +12,9 @@ CENTER = (WIDTH / 2, HEIGHT / 2)
 FPS = 60
 DEBUG = True
 
+# Game constant variables
+CLING_VLIMIT = 7
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

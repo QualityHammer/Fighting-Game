@@ -28,7 +28,10 @@ class Test(pg.sprite.Sprite):
         # Velocity
         self.vx = 0
         self.vy = 0
+        # Direction; 'r' if Right, 'l' if Left
         self.direction = 'r'
+        # Wall sliding flag; 'r' if clinging to right wall, 'l' if left, 'n' if not clinging to wall
+        self.grab_wall = 'n'
 
     # If fighter is on the ground, jumps
     def jump(self):
@@ -49,6 +52,8 @@ class Test(pg.sprite.Sprite):
             # Motion
             self.vy = Test.JUMP
             self.vx = Test.JUMP * direction
+            # Resets wall clinging flag to 'n'
+            self.grab_wall = 'n'
 
     # Checks collision with walls
     # direction; -1 to check left and 1 for right
@@ -89,8 +94,14 @@ class Test(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[LEFT]:
             self.ax = -Test.ACCEL
+            # If clinging to right wall, resets grab_wall to 'n'
+            if self.grab_wall == 'r':
+                self.grab_wall = 'n'
         elif keys[RIGHT]:
             self.ax = Test.ACCEL
+            # If clinging to left wall, resets grab_wall to 'n'
+            if self.grab_wall == 'l':
+                self.grab_wall = 'n'
         # Applies friction
         self.ax += self.vx * Test.FRICTION
         # Applies acceleration
@@ -100,6 +111,10 @@ class Test(pg.sprite.Sprite):
         if abs(self.vx) < 0.2:
             self.vx = 0
             self.ax = 0
+        # Limits velocity to CLING_VLIMIT if fighter is clinging to a wall
+        if self.grab_wall != 'n':
+            if self.vy > CLING_VLIMIT:
+                self.vy = CLING_VLIMIT
         # Applies velocity and sets position
         self.rect.x += self.vx + self.ax * 0.5
         self.rect.y += self.vy + self.ay * 0.5
