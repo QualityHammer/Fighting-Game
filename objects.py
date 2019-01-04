@@ -23,8 +23,6 @@ class Wall(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.direction = direction
         self.image = pg.image.load(path.join(OBJECTS, 'Wall.png')).convert()
-        # TODO: FIX WALL TEXTURE SCALING
-        self.image = pg.transform.scale(self.image, (166, 734))
         self.rect = self.image.get_rect()
         if direction == 'left':
             self.image = self.image

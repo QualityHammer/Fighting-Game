@@ -2,6 +2,7 @@ from settings import *
 from objects import Ground, Wall
 from fighters import Test, PunchBag
 from weapons import TestWeapon
+from stages import Background
 import sys
 
 
@@ -45,6 +46,9 @@ class Game:
         self.dummy = PunchBag()
         self.all_sprites.add(self.dummy)
         self.all_fighters.add(self.dummy)
+        # Test background
+        self.background = Background()
+        self.all_sprites.add((self.background))
         self.run()
 
     def run(self):
@@ -117,6 +121,8 @@ class Game:
         # Pygame draw
         self.screen.fill(WHITE)
         self.all_sprites.draw(self.screen)
+        self.all_fighters.draw(self.screen)
+        self.all_weapons.draw(self.screen)
         pg.display.flip()
 
     def debug(self):
