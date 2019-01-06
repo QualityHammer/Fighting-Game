@@ -1,4 +1,5 @@
 from settings import *
+from throwables import ThrowStar
 vec = pg.math.Vector2
 
 
@@ -6,13 +7,16 @@ vec = pg.math.Vector2
 class Test(pg.sprite.Sprite):
 
     # Test fighter base stats
+    HEALTH = 100
     GRAVITY = 0.8
     ACCEL = 1.5
     JUMP = -16
     FRICTION = -0.12
 
-    def __init__(self, game):
+    # game; Game class, bar; Health bar
+    def __init__(self, game, bar):
         self.game = game
+        self.bar = bar
         pg.sprite.Sprite.__init__(self)
         # Temp images
         self.STANDR = pg.image.load(path.join(FIGHTERS, 'TestFighter.png')).convert()
@@ -32,44 +36,8 @@ class Test(pg.sprite.Sprite):
         self.direction = 'r'
         # Wall sliding flag; 'r' if clinging to right wall, 'l' if left, 'n' if not clinging to wall
         self.grab_wall = 'n'
-
-    # If fighter is on the ground, jumps
-    def jump(self):
-        # Calls ycollide to check if fighter is on ground
-        hits = self.ycollide(1)
-        if hits:
-            self.vy = Test.JUMP
-        # If fighter isn't on ground, calls wall_jump
-        else:
-            self.wall_jump(1)
-            self.wall_jump(-1)
-
-    # If fighter is grabbing a wall, jumps
-    def wall_jump(self, direction):
-        # Calls xcollide to check if fighter is grabbing a wall
-        hits = self.xcollide(direction)
-        if hits:
-            # Motion
-            self.vy = Test.JUMP
-            self.vx = Test.JUMP * direction
-            # Resets wall clinging flag to 'n'
-            self.grab_wall = 'n'
-
-    # Checks collision with walls
-    # direction; -1 to check left and 1 for right
-    def xcollide(self, direction):
-        self.rect.x += direction
-        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
-        self.rect.x -= direction
-        return hits
-
-    # Checks collision with ground (potentially ceiling)
-    # direction; -1 to check ground
-    def ycollide(self, direction):
-        self.rect.y += direction
-        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
-        self.rect.y -= direction
-        return hits
+        # Health
+        self.health = Test.HEALTH
 
     # Will animate in the future
     # For now this controls the fighter direction
@@ -84,6 +52,31 @@ class Test(pg.sprite.Sprite):
                 self.image = self.STANDL
                 self.direction = 'l'
             self.image.set_colorkey(BLACK)
+
+    # Damages fighter and moves health bar
+    def damage(self, num):
+        self.health -= num
+        self.bar.damage(Test.HEALTH, num)
+
+    # If fighter is on the ground, jumps
+    def jump(self):
+        # Calls ycollide to check if fighter is on ground
+        hits = self.ycollide(1)
+        if hits:
+            self.vy = Test.JUMP
+        # If fighter isn't on ground, calls wall_jump
+        else:
+            self.wall_jump(1)
+            self.wall_jump(-1)
+
+    # Uses throwable (throwing star)
+    def throw(self):
+        if self.direction == 'r':
+            star = ThrowStar(self, self.game, 1)
+        else:
+            star = ThrowStar(self, self.game, -1)
+        self.game.all_sprites.add(star)
+        self.game.all_throwables.add(star)
 
     def update(self):
         self.animate()
@@ -119,12 +112,43 @@ class Test(pg.sprite.Sprite):
         self.rect.x += self.vx + self.ax * 0.5
         self.rect.y += self.vy + self.ay * 0.5
 
+    # If fighter is grabbing a wall, jumps
+    def wall_jump(self, direction):
+        # Calls xcollide to check if fighter is grabbing a wall
+        hits = self.xcollide(direction)
+        if hits:
+            # Motion
+            self.vy = Test.JUMP
+            self.vx = Test.JUMP * direction
+            # Resets wall clinging flag to 'n'
+            self.grab_wall = 'n'
+
+    # Checks collision with walls
+    # direction; -1 to check left and 1 for right
+    def xcollide(self, direction):
+        self.rect.x += direction
+        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
+        self.rect.x -= direction
+        return hits
+
+    # Checks collision with ground (potentially ceiling)
+    # direction; -1 to check ground
+    def ycollide(self, direction):
+        self.rect.y += direction
+        hits = pg.sprite.spritecollide(self, self.game.all_objects, False)
+        self.rect.y -= direction
+        return hits
+
 
 class PunchBag(pg.sprite.Sprite):
 
+    # Dummy stats
+    HEALTH = 1000
     GRAVITY = 0.8
 
-    def __init__(self):
+    # bar; Health bar
+    def __init__(self, bar):
+        self.bar = bar
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((60, 100))
         self.image.fill(BLACK)
@@ -136,6 +160,13 @@ class PunchBag(pg.sprite.Sprite):
         # Velocity
         self.vx = 0
         self.vy = 0
+        # Health
+        self.health = PunchBag.HEALTH
+
+    # Damages fighter and moves health bar
+    def damage(self, num):
+        self.health -= num
+        self.bar.damage(PunchBag.HEALTH, num)
 
     def update(self):
         # Applies gravity

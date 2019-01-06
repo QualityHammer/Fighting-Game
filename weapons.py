@@ -5,8 +5,10 @@ from settings import *
 class TestWeapon(pg.sprite.Sprite):
 
     # Weapon base stats
+    DAMAGE = 10
     KNOCKBACK = 20
 
+    # fighter; fighter object holding this weapon
     def __init__(self, fighter):
         pg.sprite.Sprite.__init__(self)
         self.fighter = fighter
@@ -31,10 +33,10 @@ class TestWeapon(pg.sprite.Sprite):
             if hit != self.fighter:
                 if self.direction == 'r':
                     hit.vx = TestWeapon.KNOCKBACK
-                    hit.vy = -TestWeapon.KNOCKBACK / 2
                 else:
                     hit.vx = -TestWeapon.KNOCKBACK
-                    hit.vy = -TestWeapon.KNOCKBACK / 2
+                hit.vy = -TestWeapon.KNOCKBACK / 2
+                hit.damage(TestWeapon.DAMAGE)
         # Resets sprite
         self.image = pg.image.load(path.join(WEAPONS, 'TestWeapon.png')).convert()
         self.image = pg.transform.rotate(self.image, 270)

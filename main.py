@@ -3,6 +3,7 @@ from objects import Ground, Wall
 from fighters import Test, PunchBag
 from weapons import TestWeapon
 from stages import Background
+from hud import HealthBar
 import sys
 
 
@@ -21,21 +22,29 @@ class Game:
         self.all_objects = pg.sprite.Group()
         self.all_fighters = pg.sprite.Group()
         self.all_weapons = pg.sprite.Group()
+        self.all_throwables = pg.sprite.Group()
+        self.HUD = pg.sprite.Group()
 
     def new(self):
+        # Health bars
+        self.t_health = HealthBar(self.screen, 1)
+        self.d_health = HealthBar(self.screen, 2)
+        self.HUD.add(self.t_health)
+        self.HUD.add(self.d_health)
+
         # Test ground
         self.ground = Ground()
         self.all_sprites.add(self.ground)
         self.all_objects.add(self.ground)
         # Test walls
-        self.lwall = Wall('left')
+        self.lwall = Wall('l')
         self.all_sprites.add(self.lwall)
         self.all_objects.add(self.lwall)
-        self.rwall = Wall('right')
+        self.rwall = Wall('r')
         self.all_sprites.add(self.rwall)
         self.all_objects.add(self.rwall)
         # Test fighter
-        self.test = Test(self)
+        self.test = Test(self, self.t_health)
         self.all_sprites.add(self.test)
         self.all_fighters.add(self.test)
         # Test weapon
@@ -43,12 +52,13 @@ class Game:
         self.all_sprites.add(self.weapon)
         self.all_weapons.add(self.weapon)
         # Test Dummy
-        self.dummy = PunchBag()
+        self.dummy = PunchBag(self.d_health)
         self.all_sprites.add(self.dummy)
         self.all_fighters.add(self.dummy)
         # Test background
         self.background = Background()
         self.all_sprites.add((self.background))
+
         self.run()
 
     def run(self):
@@ -109,6 +119,11 @@ class Game:
                     self.test.jump()
                 elif event.key == C:
                     self.weapon.attack()
+                elif event.key == X:
+                    self.test.throw()
+                # Damage test
+                elif event.key == Z:
+                    self.test.damage(20)
 
     def updates(self):
         # All fighters update
@@ -116,6 +131,7 @@ class Game:
         self.all_weapons.update()
         # Collisions
         self.collisions()
+        self.all_throwables.update()
 
     def draw(self):
         # Pygame draw
@@ -123,13 +139,15 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.all_fighters.draw(self.screen)
         self.all_weapons.draw(self.screen)
+        self.HUD.draw(self.screen)
         pg.display.flip()
 
     def debug(self):
         # Prints test fighter's velocity, acceleration, and position every frame
-        print(self.test.vx, self.test.vy)
-        print(self.test.ax, self.test.ay)
-        print(self.test.rect.center)
+        print('Test vel:', self.test.vx, self.test.vy)
+        print('Test acc:', self.test.ax, self.test.ay)
+        print('Test pos:', self.test.rect.center)
+        print('Dummy vel:', self.dummy.vx, self.dummy.vy)
 
 
 g = Game()

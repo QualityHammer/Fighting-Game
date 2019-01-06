@@ -19,15 +19,16 @@ class Wall(pg.sprite.Sprite):
 
     ID = 'WLL'
 
+    # direction; 'r' - right side, 'l' - left side
     def __init__(self, direction):
         pg.sprite.Sprite.__init__(self)
         self.direction = direction
         self.image = pg.image.load(path.join(OBJECTS, 'Wall.png')).convert()
         self.rect = self.image.get_rect()
-        if direction == 'left':
+        if direction == 'l':
             self.image = self.image
             self.rect.topleft = (0, 0)
-        elif direction == 'right':
+        elif direction == 'r':
             self.image = pg.transform.flip(self.image, True, False)
             self.rect.topright = (WIDTH, 0)
         else:
