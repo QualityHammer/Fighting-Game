@@ -8,6 +8,7 @@ class ThrowStar(pg.sprite.Sprite):
     DAMAGE = 5
     SPEED = 15
     KNOCKBACK = 15
+    COOLDOWN = 300
 
     # fighter; fighter object holding weapon, game; game object, direction; -1 - left, 1 - right
     def __init__(self, fighter, game, direction):

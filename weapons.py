@@ -13,10 +13,10 @@ class TestWeapon(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.fighter = fighter
         self.image = pg.image.load(path.join(WEAPONS, 'TestWeapon.png')).convert()
-        self.image = pg.transform.rotate(self.image, 270)
+        self.image = pg.transform.rotate(self.image, 290)
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.topleft = self.fighter.rect.center
+        self.rect.topleft = self.fighter.get_hand_loc()
         self.direction = 'r'
 
     # Weapon's basic attack
@@ -39,7 +39,11 @@ class TestWeapon(pg.sprite.Sprite):
                 hit.damage(TestWeapon.DAMAGE)
         # Resets sprite
         self.image = pg.image.load(path.join(WEAPONS, 'TestWeapon.png')).convert()
-        self.image = pg.transform.rotate(self.image, 270)
+        if self.direction == 'l':
+            self.image = pg.transform.rotate(self.image, 110)
+            self.image = pg.transform.flip(self.image, False, True)
+        else:
+            self.image = pg.transform.rotate(self.image, 290)
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.center = center
@@ -57,6 +61,6 @@ class TestWeapon(pg.sprite.Sprite):
         if self.direction != self.fighter.direction:
             self.flip()
         if self.direction == 'r':
-            self.rect.topleft = self.fighter.rect.center
+            self.rect.midleft = self.fighter.get_hand_loc()
         else:
-            self.rect.topright = self.fighter.rect.center
+            self.rect.midright = self.fighter.get_hand_loc()

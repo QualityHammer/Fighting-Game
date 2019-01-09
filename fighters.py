@@ -6,12 +6,16 @@ vec = pg.math.Vector2
 # Test fighter
 class Test(pg.sprite.Sprite):
 
-    # Test fighter base stats
+    # Test fighter base stats and details
     HEALTH = 100
     GRAVITY = 0.8
     ACCEL = 1.5
-    JUMP = -16
+    JUMP = -20
     FRICTION = -0.12
+    # Position where the sprite hand is located
+    HAND_LOC = (16, 49)
+    # Base throwable
+    THROWABLE = ThrowStar
 
     # game; Game class, bar; Health bar
     def __init__(self, game, bar):
@@ -38,6 +42,9 @@ class Test(pg.sprite.Sprite):
         self.grab_wall = 'n'
         # Health
         self.health = Test.HEALTH
+        # Timer to track throwable cooldown time
+        self.throw_last_used = pg.time.get_ticks()
+        print(self.throw_last_used)
 
     # Will animate in the future
     # For now this controls the fighter direction
@@ -58,6 +65,16 @@ class Test(pg.sprite.Sprite):
         self.health -= num
         self.bar.damage(Test.HEALTH, num)
 
+    # Returns tuple of x and y coordinates of hand location
+    def get_hand_loc(self):
+        if self.direction == 'r':
+            x = self.HAND_LOC[0] + self.rect.x
+        else:
+            x = self.rect.right - self.HAND_LOC[0]
+        y = self.HAND_LOC[1] + self.rect.y
+        pos = (x, y)
+        return pos
+
     # If fighter is on the ground, jumps
     def jump(self):
         # Calls ycollide to check if fighter is on ground
@@ -71,12 +88,14 @@ class Test(pg.sprite.Sprite):
 
     # Uses throwable (throwing star)
     def throw(self):
-        if self.direction == 'r':
-            star = ThrowStar(self, self.game, 1)
-        else:
-            star = ThrowStar(self, self.game, -1)
-        self.game.all_sprites.add(star)
-        self.game.all_throwables.add(star)
+        if pg.time.get_ticks() - self.THROWABLE.COOLDOWN > self.throw_last_used:
+            if self.direction == 'r':
+                star = ThrowStar(self, self.game, 1)
+            else:
+                star = ThrowStar(self, self.game, -1)
+            self.game.all_sprites.add(star)
+            self.game.all_throwables.add(star)
+            self.throw_last_used = pg.time.get_ticks()
 
     def update(self):
         self.animate()

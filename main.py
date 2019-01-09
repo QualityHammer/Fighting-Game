@@ -83,7 +83,7 @@ class Game:
                 self.test.vy = 0
             # Wall collisions
             elif c.ID == 'WLL':
-                if c.direction == 'left':
+                if c.direction == 'l':
                     # Sets wall clinging flag
                     self.test.grab_wall = 'l'
                     self.test.rect.left = c.rect.right

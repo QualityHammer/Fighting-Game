@@ -10,7 +10,7 @@ HEIGHT = 900
 SIZE = (WIDTH, HEIGHT)
 CENTER = (WIDTH / 2, HEIGHT / 2)
 FPS = 60
-DEBUG = True
+DEBUG = False
 
 # Game constant variables
 CLING_VLIMIT = 7
